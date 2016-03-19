@@ -24,7 +24,7 @@ int main() {
 
     load_opengl_functions();
 
-    graphics_init();
+    graphics_init(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     if (!script_init()) {
         return -1;
@@ -36,6 +36,8 @@ int main() {
         script_update();
         
         graphics_begin_frame();
+
+        graphics_draw_sprite(32.0f, 32.0f, 64.0f, 64.0f);
 
         script_draw();
         
