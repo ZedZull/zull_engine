@@ -1,5 +1,12 @@
-int lua_graphics_clear(lua_State *lua) {
-    graphics_clear();
+internal s32 lua_graphics_draw_sprite(lua_State *lua) {
+    // TODO(zedzull): This should probably check for the correct arguments
+    f32 x = lua_tonumber(lua, 1);
+    f32 y = lua_tonumber(lua, 2);
+    f32 width = lua_tonumber(lua, 3);
+    f32 height = lua_tonumber(lua, 4);
+
+    graphics_draw_sprite(x, y, width, height);
+
     return 0;
 }
 
@@ -37,8 +44,8 @@ bool script_init() {
     {
         lua_newtable(lua);
 
-        lua_pushcfunction(lua, lua_graphics_clear);
-        lua_setfield(lua, lua_gettop(lua) - 1, "clear");
+        lua_pushcfunction(lua, lua_graphics_draw_sprite);
+        lua_setfield(lua, lua_gettop(lua) - 1, "draw_sprite");
 
         lua_setfield(lua, lua_gettop(lua) - 1, "graphics");
     }

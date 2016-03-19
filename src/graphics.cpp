@@ -155,7 +155,7 @@ void graphics_end_frame() {
     flush_batch();
 }
 
-void graphics_draw_sprite(f32 x, f32 y, f32 w, f32 h) {
+void graphics_draw_sprite(f32 x, f32 y, f32 width, f32 height) {
     if (num_sprites >= MAX_SPRITES) {
         flush_batch();
     }
@@ -173,7 +173,7 @@ void graphics_draw_sprite(f32 x, f32 y, f32 w, f32 h) {
 
     // bottom left
     vertices[index++] = x;
-    vertices[index++] = y + h;
+    vertices[index++] = y + height;
     vertices[index++] = 1.0f; // r
     vertices[index++] = 1.0f; // g
     vertices[index++] = 1.0f; // b
@@ -181,8 +181,8 @@ void graphics_draw_sprite(f32 x, f32 y, f32 w, f32 h) {
     vertices[index++] = 1.0f; // v
 
     // bottom right
-    vertices[index++] = x + w;
-    vertices[index++] = y + h;
+    vertices[index++] = x + width;
+    vertices[index++] = y + height;
     vertices[index++] = 1.0f; // r
     vertices[index++] = 1.0f; // g
     vertices[index++] = 1.0f; // b
@@ -190,7 +190,7 @@ void graphics_draw_sprite(f32 x, f32 y, f32 w, f32 h) {
     vertices[index++] = 1.0f; // v
 
     // top right
-    vertices[index++] = x + w;
+    vertices[index++] = x + width;
     vertices[index++] = y;
     vertices[index++] = 1.0f; // r
     vertices[index++] = 1.0f; // g

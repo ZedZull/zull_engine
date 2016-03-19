@@ -36,9 +36,7 @@ int main() {
         script_update();
         
         graphics_begin_frame();
-
-        graphics_draw_sprite(32.0f, 32.0f, 64.0f, 64.0f);
-
+        
         script_draw();
         
         graphics_end_frame();
