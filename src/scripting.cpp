@@ -76,11 +76,12 @@ bool script_init() {
 }
 
 // TODO(zedzull): If any of these built-in "callback" functions aren't present in the script, it generates a runtime error.
-void script_update() {
+void script_update(f64 delta_time) {
     lua_getglobal(lua, "zull");
     lua_getfield(lua, lua_gettop(lua), "update");
+    lua_pushnumber(lua, delta_time);
 
-    safe_lua_call(lua, 0, 0);
+    safe_lua_call(lua, 1, 0);
 }
 
 void script_draw() {

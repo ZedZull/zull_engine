@@ -29,8 +29,7 @@ internal const char *fragment_shader_src = GLSL(
     uniform sampler2D u_sampler;
 
     void main() {
-        //gl_FragColor = vec4(v_color, 1.0) * texture2D(u_sampler, v_texcoord);
-        gl_FragColor = vec4(v_color, 1.0);
+        gl_FragColor = vec4(v_color, 1.0) * texture2D(u_sampler, v_texcoord);
     }
 );
 
@@ -144,6 +143,30 @@ void graphics_init(s32 width, s32 height) {
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    }
+
+    // Load the test image
+    {
+        s32 image_width;
+        s32 image_height;
+        u8 *data = stbi_load("game/test.png", &image_width, &image_height, NULL, 4);
+
+        if (data) {
+            GLuint texture;
+            glGenTextures(1, &texture);
+
+            glBindTexture(GL_TEXTURE_2D, texture);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+            stbi_image_free(data);
+        }
+        else {
+            printf("Failed to load the test image!\n");
+        }
     }
 }
 

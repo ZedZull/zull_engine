@@ -16,6 +16,7 @@ int main() {
 
     GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Zull", NULL, NULL);
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
 
     const GLFWvidmode *video_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     glfwSetWindowPos(window, (video_mode->width / 2) - (SCREEN_WIDTH / 2), (video_mode->height / 2) - (SCREEN_HEIGHT / 2));
@@ -30,10 +31,16 @@ int main() {
         return -1;
     }
 
+    f64 delta_time = 1.0 / 60.0;
+    f64 time_accumulator = 0.0;
+
     while (!glfwWindowShouldClose(window)) {
-        // TODO(zedzull): Updating and rendering a frame needs to be independant
-        // TODO(zedzull): The delta time between updates needs to be passed to Lua
-        script_update();
+        f64 start_time = glfwGetTime();
+
+        while (time_accumulator >= delta_time) {
+            script_update(delta_time);
+            time_accumulator -= delta_time;
+        }
         
         graphics_begin_frame();
         
@@ -44,6 +51,8 @@ int main() {
         glfwSwapBuffers(window);
 
         glfwPollEvents();
+
+        time_accumulator += glfwGetTime() - start_time;
     }
 
     script_shutdown();

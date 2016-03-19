@@ -1,7 +1,7 @@
 -- The screen size isn't communicated between Lua and C yet
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
-NUM_ENTITIES = 150
+NUM_ENTITIES = 2048
 
 entities = {}
 
@@ -12,11 +12,15 @@ function create_entity()
     entity.y = math.random(0, SCREEN_HEIGHT - 32)
 
     if math.random(100) <= 50 then
-        entity.vel_x = 0.0333
-        entity.vel_y = 0.0333
+        entity.vel_x = 50.0
     else
-        entity.vel_x = -0.0333
-        entity.vel_y = -0.0333
+        entity.vel_x = -50.0
+    end
+
+    if math.random(100) <= 50 then
+        entity.vel_y = 50.0
+    else
+        entity.vel_y = -50.0
     end
 
     return entity
@@ -34,10 +38,10 @@ function zull.shutdown()
 
 end
 
-function zull.update()
+function zull.update(delta_time)
     for i = 1, NUM_ENTITIES do
-        entities[i].x = entities[i].x + entities[i].vel_x
-        entities[i].y = entities[i].y + entities[i].vel_y
+        entities[i].x = entities[i].x + entities[i].vel_x * delta_time
+        entities[i].y = entities[i].y + entities[i].vel_y * delta_time
 
         if entities[i].x <= 0.0 or entities[i].x + 32.0 >= SCREEN_WIDTH then
             entities[i].vel_x = -entities[i].vel_x
