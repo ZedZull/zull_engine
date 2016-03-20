@@ -32,14 +32,22 @@ int main() {
     }
 
     f64 delta_time = 1.0 / 60.0;
-    f64 time_accumulator = 0.0;
+
+    f64 last_time = glfwGetTime();
+    f64 unprocessed_time = 0.0;
 
     while (!glfwWindowShouldClose(window)) {
-        f64 start_time = glfwGetTime();
+        f64 current_time = glfwGetTime();
+        f64 elapsed_time = current_time - last_time;
+        last_time = current_time;
 
-        while (time_accumulator >= delta_time) {
+        unprocessed_time += elapsed_time;
+
+        while (unprocessed_time >= delta_time) {
+            glfwPollEvents();
+
             script_update(delta_time);
-            time_accumulator -= delta_time;
+            unprocessed_time -= delta_time;
         }
         
         graphics_begin_frame();
@@ -49,10 +57,6 @@ int main() {
         graphics_end_frame();
 
         glfwSwapBuffers(window);
-
-        glfwPollEvents();
-
-        time_accumulator += glfwGetTime() - start_time;
     }
 
     script_shutdown();
