@@ -13,6 +13,7 @@ extern "C" {
 #define ZED_IMPLEMENTATION
 #include "zed.h"
 
+#include "input.cpp"
 #include "opengl.cpp"
 #include "graphics.cpp"
 #include "scripting.cpp"

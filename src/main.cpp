@@ -2,13 +2,6 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
-internal void keyboard_callback(GLFWwindow *window, s32 key, s32 scancode, s32 action, s32 mods) {
-    // TODO(zedzull): Input needs to be passed to Lua instead of handled directly
-    if (key == GLFW_KEY_ESCAPE) {
-        glfwSetWindowShouldClose(window, true);
-    }
-}
-
 int main() {
     glfwInit();
 
@@ -44,7 +37,12 @@ int main() {
         unprocessed_time += elapsed_time;
 
         while (unprocessed_time >= delta_time) {
+            input_update();
             glfwPollEvents();
+
+            if (input_was_key_pressed(KEY_ESCAPE)) {
+                glfwSetWindowShouldClose(window, true);
+            }
 
             script_update(delta_time);
             unprocessed_time -= delta_time;
