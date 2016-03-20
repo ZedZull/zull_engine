@@ -4,6 +4,12 @@
 #define MAX_VERTICES MAX_SPRITES * 4 * 7
 #define MAX_INDICES MAX_SPRITES * 6
 
+struct Texture {
+    s32 width;
+    s32 height;
+    GLuint gl_handle;
+};
+
 internal const char *vertex_shader_src = GLSL(
     attribute vec2 a_pos;
     attribute vec3 a_color;
@@ -38,6 +44,7 @@ internal GLuint index_buffer;
 
 internal f32 vertices[MAX_VERTICES];
 internal u16 indices[MAX_INDICES];
+internal Texture current_texture;
 
 internal s32 num_sprites = 0;
 
@@ -144,30 +151,6 @@ void graphics_init(s32 width, s32 height) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     }
-
-    // Load the test image
-    {
-        s32 image_width;
-        s32 image_height;
-        u8 *data = stbi_load("game/test.png", &image_width, &image_height, NULL, 4);
-
-        if (data) {
-            GLuint texture;
-            glGenTextures(1, &texture);
-
-            glBindTexture(GL_TEXTURE_2D, texture);
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-            stbi_image_free(data);
-        }
-        else {
-            printf("Failed to load the test image!\n");
-        }
-    }
 }
 
 void graphics_begin_frame() {
@@ -178,9 +161,41 @@ void graphics_end_frame() {
     flush_batch();
 }
 
-void graphics_draw_sprite(f32 x, f32 y, f32 width, f32 height) {
+Texture graphics_load_texture(char *filename) {
+    Texture texture = {};
+    u8 *data = stbi_load(filename, &texture.width, &texture.height, NULL, 4);
+
+    if (data) {
+        glGenTextures(1, &texture.gl_handle);
+
+        glBindTexture(GL_TEXTURE_2D, texture.gl_handle);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture.width, texture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        stbi_image_free(data);
+    }
+    else {
+        printf("Failed to load '%s'!\n", filename);
+    }
+
+    return texture;
+}
+
+void graphics_draw_sprite(Texture texture, f32 x, f32 y, f32 width, f32 height) {
     if (num_sprites >= MAX_SPRITES) {
         flush_batch();
+    }
+
+    if (current_texture.gl_handle != texture.gl_handle) {
+        flush_batch();
+
+        current_texture = texture;
+        glBindTexture(GL_TEXTURE_2D, texture.gl_handle);
     }
 
     s32 index = num_sprites * 4 * 7;
@@ -222,8 +237,4 @@ void graphics_draw_sprite(f32 x, f32 y, f32 width, f32 height) {
     vertices[index++] = 0.0f; // v
 
     ++num_sprites;
-}
-
-void graphics_clear() {
-    // TODO(zedzull): Remove this once the Lua function binding test that uses this isn't needed
 }

@@ -3,6 +3,8 @@ SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 NUM_ENTITIES = 2048
 
+test_image = zull.graphics.load_texture("game/test.png")
+
 entities = {}
 
 function create_entity()

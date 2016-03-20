@@ -1,11 +1,20 @@
+internal s32 lua_graphics_load_texture(lua_State *lua) {
+    char *filename = (char *)lua_tostring(lua, 1);
+
+    Texture texture = graphics_load_texture(filename);
+
+    return 0;
+}
+
 internal s32 lua_graphics_draw_sprite(lua_State *lua) {
     // TODO(zedzull): This should probably check for the correct arguments
+    Texture texture = {};
     f32 x = lua_tonumber(lua, 1);
     f32 y = lua_tonumber(lua, 2);
     f32 width = lua_tonumber(lua, 3);
     f32 height = lua_tonumber(lua, 4);
 
-    graphics_draw_sprite(x, y, width, height);
+    graphics_draw_sprite(texture, x, y, width, height);
 
     return 0;
 }
@@ -43,6 +52,9 @@ bool script_init() {
     // Bind graphics functions
     {
         lua_newtable(lua);
+
+        lua_pushcfunction(lua, lua_graphics_load_texture);
+        lua_setfield(lua, lua_gettop(lua) - 1, "load_texture");
 
         lua_pushcfunction(lua, lua_graphics_draw_sprite);
         lua_setfield(lua, lua_gettop(lua) - 1, "draw_sprite");
