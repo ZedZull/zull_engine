@@ -186,7 +186,7 @@ Texture graphics_load_texture(char *filename) {
     return texture;
 }
 
-void graphics_draw_sprite(Texture texture, f32 x, f32 y, f32 width, f32 height) {
+void graphics_draw_sprite(Texture texture, f32 x, f32 y) {
     if (num_sprites >= MAX_SPRITES) {
         flush_batch();
     }
@@ -211,7 +211,7 @@ void graphics_draw_sprite(Texture texture, f32 x, f32 y, f32 width, f32 height) 
 
     // bottom left
     vertices[index++] = x;
-    vertices[index++] = y + height;
+    vertices[index++] = y + texture.height;
     vertices[index++] = 1.0f; // r
     vertices[index++] = 1.0f; // g
     vertices[index++] = 1.0f; // b
@@ -219,8 +219,8 @@ void graphics_draw_sprite(Texture texture, f32 x, f32 y, f32 width, f32 height) 
     vertices[index++] = 1.0f; // v
 
     // bottom right
-    vertices[index++] = x + width;
-    vertices[index++] = y + height;
+    vertices[index++] = x + texture.width;
+    vertices[index++] = y + texture.height;
     vertices[index++] = 1.0f; // r
     vertices[index++] = 1.0f; // g
     vertices[index++] = 1.0f; // b
@@ -228,13 +228,71 @@ void graphics_draw_sprite(Texture texture, f32 x, f32 y, f32 width, f32 height) 
     vertices[index++] = 1.0f; // v
 
     // top right
-    vertices[index++] = x + width;
+    vertices[index++] = x + texture.width;
     vertices[index++] = y;
     vertices[index++] = 1.0f; // r
     vertices[index++] = 1.0f; // g
     vertices[index++] = 1.0f; // b
     vertices[index++] = 1.0f; // u
     vertices[index++] = 0.0f; // v
+
+    ++num_sprites;
+}
+
+void graphics_draw_sprite_ex(Texture texture, f32 dest_x, f32 dest_y, f32 dest_width, f32 dest_height, f32 src_x, f32 src_y, f32 src_width, f32 src_height) {
+    if (num_sprites >= MAX_SPRITES) {
+        flush_batch();
+    }
+
+    if (current_texture.gl_handle != texture.gl_handle) {
+        flush_batch();
+
+        current_texture = texture;
+        glBindTexture(GL_TEXTURE_2D, texture.gl_handle);
+    }
+
+    s32 index = num_sprites * 4 * 7;
+
+    f32 u1 = (src_x / texture.width);
+    f32 v1 = (src_y / texture.height);
+    f32 u2 = (src_x / texture.width) + (src_width / texture.width);
+    f32 v2 = (src_y / texture.height) + (src_height / texture.height);
+
+    // top left
+    vertices[index++] = dest_x;
+    vertices[index++] = dest_y;
+    vertices[index++] = 1.0f; // r
+    vertices[index++] = 1.0f; // g
+    vertices[index++] = 1.0f; // b
+    vertices[index++] = u1; // u
+    vertices[index++] = v1; // v
+
+    // bottom left
+    vertices[index++] = dest_x;
+    vertices[index++] = dest_y + dest_height;
+    vertices[index++] = 1.0f; // r
+    vertices[index++] = 1.0f; // g
+    vertices[index++] = 1.0f; // b
+    vertices[index++] = u1; // u
+    vertices[index++] = v2; // v
+
+    // bottom right
+    vertices[index++] = dest_x + dest_width;
+    vertices[index++] = dest_y + dest_height;
+    vertices[index++] = 1.0f; // r
+    vertices[index++] = 1.0f; // g
+    vertices[index++] = 1.0f; // b
+    vertices[index++] = u2; // u
+    vertices[index++] = v2; // v
+
+    // top right
+    vertices[index++] = dest_x + dest_width;
+    vertices[index++] = dest_y;
+    vertices[index++] = 1.0f; // r
+    vertices[index++] = 1.0f; // g
+    vertices[index++] = 1.0f; // b
+    vertices[index++] = u2; // u
+    vertices[index++] = v1; // v
 
     ++num_sprites;
 }
