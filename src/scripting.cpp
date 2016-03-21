@@ -6,15 +6,15 @@ internal s32 lua_graphics_load_texture(lua_State *lua) {
     return 0;
 }
 
+Texture texture;
+
 internal s32 lua_graphics_draw_sprite(lua_State *lua) {
+    // TODO(zedzull): This is using hacked together texture loading (see below) until there's proper bindings
     // TODO(zedzull): This should probably check for the correct arguments
-    Texture texture = {};
     f32 x = lua_tonumber(lua, 1);
     f32 y = lua_tonumber(lua, 2);
-    f32 width = lua_tonumber(lua, 3);
-    f32 height = lua_tonumber(lua, 4);
 
-    graphics_draw_sprite(texture, x, y, width, height);
+    graphics_draw_sprite(texture, x, y);
 
     return 0;
 }
@@ -44,6 +44,9 @@ internal s32 safe_lua_call(lua_State *lua, s32 num_args, s32 num_returns) {
 internal lua_State *lua;
 
 bool script_init() {
+    // TODO(zedzull): Texture loading is hacked on right here until there's proper bindings
+    texture = graphics_load_texture("game/test.png");
+
     lua = luaL_newstate();
     luaL_openlibs(lua);
 

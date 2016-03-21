@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 
 extern "C" {
-#include <lua.h>
+#include <luajit.h>
 #include <lualib.h>
 #include <lauxlib.h>
 }
@@ -13,6 +13,7 @@ extern "C" {
 #define ZED_IMPLEMENTATION
 #include "zed.h"
 
+#include "input.cpp"
 #include "opengl.cpp"
 #include "graphics.cpp"
 #include "scripting.cpp"

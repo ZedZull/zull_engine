@@ -57,6 +57,6 @@ end
 
 function zull.draw()
     for i = 1, NUM_ENTITIES do
-        zull.graphics.draw_sprite(entities[i].x, entities[i].y, 32.0, 32.0)
+        zull.graphics.draw_sprite(entities[i].x, entities[i].y)
     end
 end
