@@ -164,6 +164,8 @@ void script_input_update(SDL_Event event) {
     lua_newtable(lua);
     lua_pushstring(lua, "__EVENT__");
     lua_setfield(lua, -2, "__type");
+    lua_pushstring(lua, input_event_type_to_string(event.type));
+    lua_setfield(lua, -2, "type");
     if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN) {
         lua_pushstring(lua, SDL_GetKeyName(event.key.keysym.sym));
         lua_setfield(lua, -2, "key");
