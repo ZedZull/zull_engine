@@ -8,8 +8,8 @@ function rect_t(x, y, w, h)
     return temp
 end
 
-function animation_t(name)
-    local temp = {delays={}, rects={}, image="", 
+function animation_t()
+    local temp = {delays={}, rects={}, 
     cur_frame=1,cur_delay=0,cur_rect=nil,
     __type="__ANIMATION__"}
     function temp:add_frame(rect, delay)
