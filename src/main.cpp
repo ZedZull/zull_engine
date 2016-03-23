@@ -41,10 +41,10 @@ int main(int argc, char *argv[]) {
         unprocessed_time += elapsed_time;
 
         while (unprocessed_time >= delta_time) {
-            //input_update();
-
             SDL_Event event;
             while(SDL_PollEvent(&event)) {
+                input_update(event);
+                script_input_update(event);
                 if(event.type == SDL_QUIT) {
                     running = 0;
                 }
