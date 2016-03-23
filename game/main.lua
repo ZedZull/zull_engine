@@ -58,7 +58,7 @@ function sprite_t(img)
         if self.cur_anim == "" then
             zull.graphics.draw_sprite(self.img, self.x, self.y)
         else
-            zull.graphics.draw_sprite_ex(self.img, self.x, self.y, self.img.width, self.img.height,
+            zull.graphics.draw_sprite_ex(self.img, self.x, self.y, self:get_anim().cur_rect.w, self:get_anim().cur_rect.h,
                 self:get_anim().cur_rect.x, self:get_anim().cur_rect.y, 
                 self:get_anim().cur_rect.w, self:get_anim().cur_rect.h)
         end
@@ -66,69 +66,80 @@ function sprite_t(img)
     return temp
 end
 
-test_image = zull.graphics.load_texture("game/test.png")
-test_animation = animation_t()
-test_animation:add_frame(rect_t(0, 0, 16, 16), 1)
-test_animation:add_frame(rect_t(16, 16, 16, 16), 1)
-test_animation:add_frame(rect_t(0, 0, 32, 32), 1)
-test_sprite = sprite_t(test_image)
-test_sprite:add_anim("test", test_animation)
-test_sprite:play_anim("test")
-entities = {}
-
-function create_entity()
-    local entity = {}
-
-    entity.x = math.random(0, SCREEN_WIDTH - 32)
-    entity.y = math.random(0, SCREEN_HEIGHT - 32)
-
-    if math.random(100) <= 50 then
-        entity.vel_x = 50.0
-    else
-        entity.vel_x = -50.0
+function font_t(img)
+    if type(img) == "string" then img = zull.graphics.load_texture(img) end
+    local temp = {img=img, characters={}, scale=1}   
+    function temp:add_char(c, rect)
+        self.characters[c] = rect
     end
-
-    if math.random(100) <= 50 then
-        entity.vel_y = 50.0
-    else
-        entity.vel_y = -50.0
+    function temp:draw_text(text, x, y)
+        local x = x
+        local y = y
+        for i=1, #text do
+            local c = text:sub(i, i)
+            zull.graphics.draw_sprite_ex(self.img, x, y, self.characters[c].w * self.scale, self.characters[c].h * self.scale,
+                                        self.characters[c].x, self.characters[c].y, self.characters[c].w, self.characters[c].h)
+            x = x + self.characters[c].w
+        end
     end
-
-    return entity
+    return temp
 end
 
-function zull.init()
-   math.randomseed(os.time())
+test_font = font_t("game/loveable_rogue.png")
+test_font:add_char('a', rect_t(0, 0, 8, 8))
+test_font:add_char('b', rect_t(8, 0, 8, 8))
+test_font:add_char('c', rect_t(16, 0, 8, 8))
+test_font:add_char('d', rect_t(24, 0, 8, 8))
+test_font:add_char('e', rect_t(32, 0, 8, 8))
+test_font:add_char('f', rect_t(40, 0, 8, 8))
+test_font:add_char('g', rect_t(48, 0, 8, 8))
+test_font:add_char('h', rect_t(56, 0, 8, 8))
+test_font:add_char('i', rect_t(64, 0, 8, 8))
+test_font:add_char('j', rect_t(72, 0, 8, 8))
+test_font:add_char('k', rect_t(80, 0, 8, 8))
+test_font:add_char('l', rect_t(88, 0, 8, 8))
+test_font:add_char('m', rect_t(96, 0, 8, 8))
+test_font:add_char('n', rect_t(104, 0, 8, 8))
+test_font:add_char('o', rect_t(112, 0, 8, 8))
+test_font:add_char('p', rect_t(120, 0, 8, 8))
+test_font:add_char('q', rect_t(128, 0, 8, 8))
+test_font:add_char('r', rect_t(136, 0, 8, 8))
+test_font:add_char('s', rect_t(144, 0, 8, 8))
+test_font:add_char('t', rect_t(152, 0, 8, 8))
+test_font:add_char('u', rect_t(160, 0, 8, 8))
+test_font:add_char('v', rect_t(168, 0, 8, 8))
+test_font:add_char('w', rect_t(176, 0, 8, 8))
+test_font:add_char('x', rect_t(184, 0, 8, 8))
+test_font:add_char('y', rect_t(192, 0, 8, 8))
+test_font:add_char('z', rect_t(200, 0, 8, 8))
+test_font:add_char(' ', rect_t(208, 0, 8, 8))
+test_font:add_char('0', rect_t(0, 16, 8, 8))
+test_font:add_char('1', rect_t(8, 16, 8, 8))
+test_font:add_char('2', rect_t(16, 16, 8, 8))
+test_font:add_char('3', rect_t(24, 16, 8, 8))
+test_font:add_char('4', rect_t(32, 16, 8, 8))
+test_font:add_char('5', rect_t(40, 16, 8, 8))
+test_font:add_char('6', rect_t(48, 16, 8, 8))
+test_font:add_char('7', rect_t(56, 16, 8, 8))
+test_font:add_char('8', rect_t(64, 16, 8, 8))
+test_font:add_char('9', rect_t(72, 16, 8, 8))
+test_font:add_char(':', rect_t(80, 16, 8, 8))
+test_font:add_char('/', rect_t(104, 16, 8, 8))
 
-    for i = 1, NUM_ENTITIES do
-        entities[i] = create_entity()
-    end
+
+
+function zull.init()
 end
 
 function zull.shutdown()
+end
 
+function zull.input(event)
 end
 
 function zull.update(delta_time)
-    test_sprite:update(delta_time)
-   for i = 1, NUM_ENTITIES do
-        entities[i].x = entities[i].x + entities[i].vel_x * delta_time
-        entities[i].y = entities[i].y + entities[i].vel_y * delta_time
-
-        if entities[i].x <= 0.0 or entities[i].x + 32.0 >= SCREEN_WIDTH then
-            entities[i].vel_x = -entities[i].vel_x
-        end
-
-        if entities[i].y <= 0.0 or entities[i].y + 32.0 >= SCREEN_HEIGHT then
-            entities[i].vel_y = -entities[i].vel_y
-        end
-    end
 end
 
 function zull.draw()
-    test_sprite:draw()
-    for i = 1, NUM_ENTITIES do
-        --zull.graphics.draw_sprite_ex(test_image, entities[i].x, entities[i].y, 32, 32,
-        --    test_animation.cur_rect.x, test_animation.cur_rect.y, test_animation.cur_rect.w, test_animation.cur_rect.h)
-    end
+    test_font:draw_text('hp: 10/10', 0, 0)
 end
