@@ -45,7 +45,9 @@ int main(int argc, char *argv[]) {
 
             SDL_Event event;
             while(SDL_PollEvent(&event)) {
-
+                if(event.type == SDL_QUIT) {
+                    running = 0;
+                }
             }
 
             script_update(delta_time);
