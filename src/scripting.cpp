@@ -1,21 +1,47 @@
+static int clear_stack(lua_State *lua) {
+    lua_pop(lua, lua_gettop(lua));
+    return 0;
+}
+
 internal s32 lua_graphics_load_texture(lua_State *lua) {
     char *filename = (char *)lua_tostring(lua, 1);
 
     Texture texture = graphics_load_texture(filename);
-
-    return 0;
+    // Can't just push the texture as userdata because it gets
+    // deleted after scope finishes
+    lua_newtable(lua);
+    lua_pushnumber(lua, texture.width);
+    lua_setfield(lua, -2, "width");
+    lua_pushnumber(lua, texture.height);
+    lua_setfield(lua, -2, "height");
+    lua_pushnumber(lua, texture.gl_handle);
+    lua_setfield(lua, -2, "handle");
+    // This should be used to determine if the proper type
+    // is being passed into C functions from Lua
+    lua_pushstring(lua, "__TEXTURE__");
+    lua_setfield(lua, -2, "__type");
+    return 1;
 }
-
-Texture texture;
 
 internal s32 lua_graphics_draw_sprite(lua_State *lua) {
     // TODO(zedzull): This is using hacked together texture loading (see below) until there's proper bindings
     // TODO(zedzull): This should probably check for the correct arguments
-    f32 x = lua_tonumber(lua, 1);
-    f32 y = lua_tonumber(lua, 2);
+	luaL_checktype(lua, 1, LUA_TTABLE);
+    lua_getfield(lua, 1, "__type");
+    const char *type = luaL_checkstring(lua, -1);
+    // Check if type == "__TEXTURE__"
+    lua_getfield(lua, 1, "width");
+    lua_getfield(lua, 1, "height");
+    lua_getfield(lua, 1, "handle");
+    int width = luaL_checknumber(lua, -3);
+    int height = luaL_checknumber(lua, -2);
+    GLuint handle = (GLuint)luaL_checknumber(lua, -1);
+    Texture texture = { width, height, handle };
+    f32 x = lua_tonumber(lua, 2);
+    f32 y = lua_tonumber(lua, 3);
 
     graphics_draw_sprite(texture, x, y);
-
+    clear_stack(lua);
     return 0;
 }
 
@@ -45,7 +71,7 @@ internal lua_State *lua;
 
 bool script_init() {
     // TODO(zedzull): Texture loading is hacked on right here until there's proper bindings
-    texture = graphics_load_texture("game/test.png");
+    // Texture texture = graphics_load_texture("game/test.png");
 
     lua = luaL_newstate();
     luaL_openlibs(lua);
