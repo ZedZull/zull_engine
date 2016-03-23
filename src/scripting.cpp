@@ -45,6 +45,34 @@ internal s32 lua_graphics_draw_sprite(lua_State *lua) {
     return 0;
 }
 
+static int lua_graphics_draw_sprite_ex(lua_State *lua) {
+    luaL_checktype(lua, 1, LUA_TTABLE);
+    lua_getfield(lua, 1, "__type");
+    const char *type = luaL_checkstring(lua, -1);
+    // Check if type == "__TEXTURE__"
+    lua_getfield(lua, 1, "width");
+    lua_getfield(lua, 1, "height");
+    lua_getfield(lua, 1, "handle");
+    int width = luaL_checknumber(lua, -3);
+    int height = luaL_checknumber(lua, -2);
+    GLuint handle = (GLuint)luaL_checknumber(lua, -1);
+    Texture texture = { width, height, handle };
+    float dest_x = lua_tonumber(lua, 2);
+    float dest_y = lua_tonumber(lua, 3);
+    float dest_width = lua_tonumber(lua, 4);
+    float dest_height = lua_tonumber(lua, 5);
+    float src_x = lua_tonumber(lua, 6);
+    float src_y = lua_tonumber(lua, 7);
+    float src_width = lua_tonumber(lua, 8);
+    float src_height = lua_tonumber(lua, 9);
+
+    graphics_draw_sprite_ex(texture, 
+                            dest_x, dest_y, dest_width, dest_height, 
+                            src_x, src_y, src_width, src_height);
+    clear_stack(lua);
+    return 0;
+}
+
 internal s32 lua_runtime_error(lua_State *lua) {
     luaL_traceback(lua, lua, lua_tostring(lua, lua_gettop(lua)), 1);
     printf("%s\n", lua_tolstring(lua, lua_gettop(lua), NULL));
@@ -87,6 +115,9 @@ bool script_init() {
 
         lua_pushcfunction(lua, lua_graphics_draw_sprite);
         lua_setfield(lua, lua_gettop(lua) - 1, "draw_sprite");
+
+        lua_pushcfunction(lua, lua_graphics_draw_sprite_ex);
+        lua_setfield(lua, lua_gettop(lua) - 1, "draw_sprite_ex");
 
         lua_setfield(lua, lua_gettop(lua) - 1, "graphics");
     }
