@@ -24,12 +24,11 @@ internal s32 lua_graphics_load_texture(lua_State *lua) {
 }
 
 internal s32 lua_graphics_draw_sprite(lua_State *lua) {
-    // TODO(zedzull): This is using hacked together texture loading (see below) until there's proper bindings
     // TODO(zedzull): This should probably check for the correct arguments
 	luaL_checktype(lua, 1, LUA_TTABLE);
     lua_getfield(lua, 1, "__type");
     const char *type = luaL_checkstring(lua, -1);
-    // Check if type == "__TEXTURE__"
+    // TODO(darithorn): Check if type == "__TEXTURE__"
     lua_getfield(lua, 1, "width");
     lua_getfield(lua, 1, "height");
     lua_getfield(lua, 1, "handle");
@@ -49,7 +48,7 @@ static int lua_graphics_draw_sprite_ex(lua_State *lua) {
     luaL_checktype(lua, 1, LUA_TTABLE);
     lua_getfield(lua, 1, "__type");
     const char *type = luaL_checkstring(lua, -1);
-    // Check if type == "__TEXTURE__"
+    // TODO(darithorn): Check if type == "__TEXTURE__"
     lua_getfield(lua, 1, "width");
     lua_getfield(lua, 1, "height");
     lua_getfield(lua, 1, "handle");
@@ -98,9 +97,6 @@ internal s32 safe_lua_call(lua_State *lua, s32 num_args, s32 num_returns) {
 internal lua_State *lua;
 
 bool script_init() {
-    // TODO(zedzull): Texture loading is hacked on right here until there's proper bindings
-    // Texture texture = graphics_load_texture("game/test.png");
-
     lua = luaL_newstate();
     luaL_openlibs(lua);
 
