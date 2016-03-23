@@ -20,7 +20,7 @@ int main() {
 
     graphics_init(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    if (!script_init()) {
+    if (!script_init("game/main.lua")) {
         return -1;
     }
 
