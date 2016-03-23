@@ -90,7 +90,7 @@ internal s32 safe_lua_call(lua_State *lua, s32 num_args, s32 num_returns) {
     s32 result = lua_pcall(lua, num_args, num_returns, error_handler_pos);
 
     lua_remove(lua, error_handler_pos);
-
+    clear_stack(lua);
     return result;
 }
 
@@ -156,6 +156,25 @@ void script_draw() {
     lua_getfield(lua, lua_gettop(lua), "draw");
 
     safe_lua_call(lua, 0, 0);
+}
+
+void script_input_update(SDL_Event event) {
+    lua_getglobal(lua, "zull");
+    lua_getfield(lua, lua_gettop(lua), "input");
+    lua_newtable(lua);
+    lua_pushstring(lua, "__EVENT__");
+    lua_setfield(lua, -2, "__type");
+    if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN) {
+        lua_pushstring(lua, SDL_GetKeyName(event.key.keysym.sym));
+        lua_setfield(lua, -2, "key");
+        if (event.key.state == SDL_RELEASED) {
+            lua_pushstring(lua, "up");
+        } else {
+            lua_pushstring(lua, "down");
+        }
+        lua_setfield(lua, -2, "state");
+    }
+    safe_lua_call(lua, 1, 0);
 }
 
 void script_shutdown() {
