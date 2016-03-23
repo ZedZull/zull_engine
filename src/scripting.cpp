@@ -180,6 +180,25 @@ void script_input_update(SDL_Event event) {
         lua_setfield(lua, -2, "x");
         lua_pushnumber(lua, event.motion.y);
         lua_setfield(lua, -2, "y");
+    } else if(event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) {
+        lua_pushnumber(lua, event.button.x);
+        lua_setfield(lua, -2, "x");
+        lua_pushnumber(lua, event.button.y);
+        lua_setfield(lua, -2, "y");
+        if (event.button.button == SDL_BUTTON_LEFT) {
+            lua_pushstring(lua, "left");
+        } else if (event.button.button == SDL_BUTTON_RIGHT) {
+            lua_pushstring(lua, "right");
+        } else if (event.button.button == SDL_BUTTON_MIDDLE) {
+            lua_pushstring(lua, "middle");
+        }
+        lua_setfield(lua, -2, "button");
+        if (event.button.state == SDL_RELEASED) {
+            lua_pushstring(lua, "up");
+        } else {
+            lua_pushstring(lua, "down");
+        }
+        lua_setfield(lua, -2, "state");
     }
     safe_lua_call(lua, 1, 0);
 }
