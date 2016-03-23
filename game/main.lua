@@ -34,11 +34,42 @@ function animation_t()
     return temp
 end
 
+function sprite_t(img)
+    if type(img) == "string" then img = zull.graphics.load_texture(img) end
+    local temp = {img=img, animations={}, x=0, y=0, cur_anim=""}
+    function temp:add_anim(name, anim)
+        self.animations[name] = anim
+    end
+    function temp:play_anim(name)
+        self.cur_anim = name
+    end
+    function temp:stop_anim()
+        self.cur_anim = ""
+    end
+    function temp:get_anim() 
+        if self.cur_anim == "" then return nil end
+        return self.animations[self.cur_anim]
+    end
+    function temp:update(delta, fn)
+        if cur_anim ~= "" then self.animations[self.cur_anim]:update(delta) end
+        if fn ~= nil then fn(delta) end
+    end
+    function temp:draw()
+        zull.graphics.draw_sprite_ex(self.img, self.x, self.y, self.img.width, self.img.height,
+            self:get_anim().cur_rect.x, self:get_anim().cur_rect.y, 
+            self:get_anim().cur_rect.w, self:get_anim().cur_rect.h)
+    end
+    return temp
+end
+
 test_image = zull.graphics.load_texture("game/test.png")
 test_animation = animation_t()
-test_animation:add_frame(rect_t(0, 0, 16, 16), 2)
-test_animation:add_frame(rect_t(16, 16, 16, 16), 2)
-test_animation:add_frame(rect_t(0, 0, 32, 32), 2)
+test_animation:add_frame(rect_t(0, 0, 16, 16), 1)
+test_animation:add_frame(rect_t(16, 16, 16, 16), 1)
+test_animation:add_frame(rect_t(0, 0, 32, 32), 1)
+test_sprite = sprite_t(test_image)
+test_sprite:add_anim("test", test_animation)
+test_sprite:play_anim("test")
 entities = {}
 
 function create_entity()
@@ -75,7 +106,7 @@ function zull.shutdown()
 end
 
 function zull.update(delta_time)
-    test_animation:update(delta_time)
+    test_sprite:update(delta_time)
    for i = 1, NUM_ENTITIES do
         entities[i].x = entities[i].x + entities[i].vel_x * delta_time
         entities[i].y = entities[i].y + entities[i].vel_y * delta_time
@@ -91,8 +122,9 @@ function zull.update(delta_time)
 end
 
 function zull.draw()
+    test_sprite:draw()
     for i = 1, NUM_ENTITIES do
-        zull.graphics.draw_sprite_ex(test_image, entities[i].x, entities[i].y, 32, 32,
-            test_animation.cur_rect.x, test_animation.cur_rect.y, test_animation.cur_rect.w, test_animation.cur_rect.h)
+        --zull.graphics.draw_sprite_ex(test_image, entities[i].x, entities[i].y, 32, 32,
+        --    test_animation.cur_rect.x, test_animation.cur_rect.y, test_animation.cur_rect.w, test_animation.cur_rect.h)
     end
 end
