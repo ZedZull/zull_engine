@@ -1,5 +1,6 @@
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+#define __SDL2__
+#include <SDL.h>
+#include <GL/glew.h>
 
 extern "C" {
 #include <luajit.h>
@@ -14,7 +15,7 @@ extern "C" {
 #include "zed.h"
 
 #include "input.cpp"
-#include "opengl.cpp"
+// #include "opengl.cpp"
 #include "graphics.cpp"
 #include "scripting.cpp"
 

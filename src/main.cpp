@@ -2,21 +2,24 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
-int main() {
-    glfwInit();
+int main(int argc, char *argv[]) {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        printf("SDL Error: %s\n", SDL_GetError());
+        return -1;
+    }
 
-    glfwWindowHint(GLFW_RESIZABLE, false);
 
-    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Zull", NULL, NULL);
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
-
-    const GLFWvidmode *video_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    glfwSetWindowPos(window, (video_mode->width / 2) - (SCREEN_WIDTH / 2), (video_mode->height / 2) - (SCREEN_HEIGHT / 2));
-
-    glfwSetKeyCallback(window, keyboard_callback);
-
-    load_opengl_functions();
+    SDL_Window *window = SDL_CreateWindow("Zull", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+                                        SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+    SDL_GLContext context = SDL_GL_CreateContext(window);
+    
+    GLenum err = glewInit();
+    if(err != GLEW_OK) {
+        printf("GLEW Error: %s\n", glewGetErrorString(err));
+        SDL_GL_DeleteContext(context);
+        SDL_DestroyWindow(window);
+        return -1;
+    }
 
     graphics_init(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -26,22 +29,23 @@ int main() {
 
     f64 delta_time = 1.0 / 60.0;
 
-    f64 last_time = glfwGetTime();
+    f64 last_time = SDL_GetTicks();
     f64 unprocessed_time = 0.0;
 
-    while (!glfwWindowShouldClose(window)) {
-        f64 current_time = glfwGetTime();
+    int running = 1;
+    while (running) {
+        f64 current_time = SDL_GetTicks();
         f64 elapsed_time = current_time - last_time;
         last_time = current_time;
 
         unprocessed_time += elapsed_time;
 
         while (unprocessed_time >= delta_time) {
-            input_update();
-            glfwPollEvents();
+            //input_update();
 
-            if (input_was_key_pressed(KEY_ESCAPE)) {
-                glfwSetWindowShouldClose(window, true);
+            SDL_Event event;
+            while(SDL_PollEvent(&event)) {
+
             }
 
             script_update(delta_time);
@@ -54,12 +58,14 @@ int main() {
         
         graphics_end_frame();
 
-        glfwSwapBuffers(window);
+        SDL_GL_SwapWindow(window);
     }
 
     script_shutdown();
 
-    glfwTerminate();
+    SDL_GL_DeleteContext(context);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 
     return 0;
 }
