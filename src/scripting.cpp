@@ -175,6 +175,11 @@ void script_input_update(SDL_Event event) {
             lua_pushstring(lua, "down");
         }
         lua_setfield(lua, -2, "state");
+    } else if(event.type == SDL_MOUSEMOTION) {
+        lua_pushnumber(lua, event.motion.x);
+        lua_setfield(lua, -2, "x");
+        lua_pushnumber(lua, event.motion.y);
+        lua_setfield(lua, -2, "y");
     }
     safe_lua_call(lua, 1, 0);
 }
