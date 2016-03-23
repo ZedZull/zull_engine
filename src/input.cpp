@@ -12,6 +12,10 @@ const char *input_event_type_to_string(unsigned int type) {
 			return "keyup";
 		case SDL_MOUSEMOTION:
 			return "mousemove";
+		case SDL_MOUSEBUTTONUP:
+			return "mouseup";
+		case SDL_MOUSEBUTTONDOWN:
+			return "mousedown";
 	}
 	return "none";
 }
