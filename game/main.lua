@@ -29,7 +29,7 @@ function create_entity()
 end
 
 function zull.init()
-    math.randomseed(os.time())
+   math.randomseed(os.time())
 
     for i = 1, NUM_ENTITIES do
         entities[i] = create_entity()
@@ -41,7 +41,7 @@ function zull.shutdown()
 end
 
 function zull.update(delta_time)
-    for i = 1, NUM_ENTITIES do
+   for i = 1, NUM_ENTITIES do
         entities[i].x = entities[i].x + entities[i].vel_x * delta_time
         entities[i].y = entities[i].y + entities[i].vel_y * delta_time
 
@@ -57,6 +57,6 @@ end
 
 function zull.draw()
     for i = 1, NUM_ENTITIES do
-        zull.graphics.draw_sprite(entities[i].x, entities[i].y)
+        zull.graphics.draw_sprite(test_image, entities[i].x, entities[i].y)
     end
 end
