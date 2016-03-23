@@ -79,7 +79,7 @@ function font_t(img)
             local c = text:sub(i, i)
             zull.graphics.draw_sprite_ex(self.img, x, y, self.characters[c].w * self.scale, self.characters[c].h * self.scale,
                                         self.characters[c].x, self.characters[c].y, self.characters[c].w, self.characters[c].h)
-            x = x + self.characters[c].w
+            x = x + (self.characters[c].w * self.scale)
         end
     end
     return temp
