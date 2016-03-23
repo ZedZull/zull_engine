@@ -51,13 +51,17 @@ function sprite_t(img)
         return self.animations[self.cur_anim]
     end
     function temp:update(delta, fn)
-        if cur_anim ~= "" then self.animations[self.cur_anim]:update(delta) end
+        if self.cur_anim ~= "" then self.animations[self.cur_anim]:update(delta) end
         if fn ~= nil then fn(delta) end
     end
     function temp:draw()
-        zull.graphics.draw_sprite_ex(self.img, self.x, self.y, self.img.width, self.img.height,
-            self:get_anim().cur_rect.x, self:get_anim().cur_rect.y, 
-            self:get_anim().cur_rect.w, self:get_anim().cur_rect.h)
+        if self.cur_anim == "" then
+            zull.graphics.draw_sprite(self.img, self.x, self.y)
+        else
+            zull.graphics.draw_sprite_ex(self.img, self.x, self.y, self.img.width, self.img.height,
+                self:get_anim().cur_rect.x, self:get_anim().cur_rect.y, 
+                self:get_anim().cur_rect.w, self:get_anim().cur_rect.h)
+        end
     end
     return temp
 end
