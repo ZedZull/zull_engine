@@ -96,7 +96,7 @@ internal s32 safe_lua_call(lua_State *lua, s32 num_args, s32 num_returns) {
 
 internal lua_State *lua;
 
-bool script_init() {
+bool script_init(const char *file) {
     lua = luaL_newstate();
     luaL_openlibs(lua);
 
@@ -120,11 +120,10 @@ bool script_init() {
 
     lua_setglobal(lua, "zull");
 
-    // TODO(zedzull): Loading the main script file should be more flexible (from a different directory, name, etc.)
-    s32 status = luaL_loadfile(lua, "game/main.lua");
+    s32 status = luaL_loadfile(lua, file);
 
     if (status == LUA_ERRFILE) {
-        printf("Could not load 'game/main.lua'!\n");
+        printf("Could not load '%s'!\n", file);
         return false;
     }
 
