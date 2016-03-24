@@ -167,6 +167,7 @@ void graphics_init(s32 width, s32 height) {
 
 void graphics_begin_frame() {
     glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor((clear_color_red / 255.0f), (clear_color_green / 255.0f), (clear_color_blue / 255.0f), 1.0f);
 }
 
 void graphics_end_frame() {
