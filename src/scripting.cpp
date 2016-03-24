@@ -72,6 +72,14 @@ static int lua_graphics_draw_sprite_ex(lua_State *lua) {
     return 0;
 }
 
+static int lua_graphics_set_clear_color(lua_State *lua) {
+    float red = lua_tonumber(lua, 1);
+    float green = lua_tonumber(lua, 2);
+    float blue = lua_tonumber(lua, 3);
+    graphics_set_clear_color(red, green, blue);
+    return 0;
+}
+
 internal s32 lua_runtime_error(lua_State *lua) {
     luaL_traceback(lua, lua, lua_tostring(lua, lua_gettop(lua)), 1);
     printf("%s\n", lua_tolstring(lua, lua_gettop(lua), NULL));
@@ -114,6 +122,9 @@ bool script_init(const char *file) {
 
         lua_pushcfunction(lua, lua_graphics_draw_sprite_ex);
         lua_setfield(lua, lua_gettop(lua) - 1, "draw_sprite_ex");
+
+        lua_pushcfunction(lua, lua_graphics_set_clear_color);
+        lua_setfield(lua, lua_gettop(lua) - 1, "clear_color");
 
         lua_setfield(lua, lua_gettop(lua) - 1, "graphics");
     }
