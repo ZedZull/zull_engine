@@ -31,7 +31,7 @@ end
 
 function sprite_t(img)
     if type(img) == "string" then img = zull.graphics.load_texture(img) end
-    local temp = {img=img, animations={}, x=0, y=0, cur_anim=""}
+    local temp = {img=img, animations={}, x=0, y=0, cur_anim="", scale=1}
     function temp:add_anim(name, anim)
         self.animations[name] = anim
     end
@@ -53,7 +53,7 @@ function sprite_t(img)
         if self.cur_anim == "" then
             zull.graphics.draw_sprite(self.img, self.x, self.y)
         else
-            zull.graphics.draw_sprite_ex(self.img, self.x, self.y, self:get_anim().cur_rect.w, self:get_anim().cur_rect.h,
+            zull.graphics.draw_sprite_ex(self.img, self.x, self.y, self:get_anim().cur_rect.w * self.scale, self:get_anim().cur_rect.h * self.scale,
                 self:get_anim().cur_rect.x, self:get_anim().cur_rect.y, 
                 self:get_anim().cur_rect.w, self:get_anim().cur_rect.h)
         end
