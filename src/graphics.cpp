@@ -45,6 +45,9 @@ internal GLuint index_buffer;
 internal f32 vertices[MAX_VERTICES];
 internal u16 indices[MAX_INDICES];
 internal Texture current_texture;
+static float clear_color_red = 100.0f;
+static float clear_color_green = 149.0f;
+static float clear_color_blue = 237.0f;
 
 internal s32 num_sprites = 0;
 
@@ -96,6 +99,15 @@ internal void flush_batch() {
     num_sprites = 0;
 }
 
+void graphics_set_clear_color(float red, float green, float blue) {
+    if (red > 255.0f) red = 255.0f;
+    if (green > 255.0f) green = 255.0f;
+    if (blue > 255.0f) blue = 255.0f;
+    clear_color_red = red;
+    clear_color_green = green;
+    clear_color_blue = blue;
+}
+
 void graphics_init(s32 width, s32 height) {
     // Set the initial OpenGL state
     {
@@ -105,7 +117,7 @@ void graphics_init(s32 width, s32 height) {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // TODO(zedzull): The clear color needs to be configurable
-        glClearColor((100.0f / 255.0f), (149.0f / 255.0f), (237.0f / 255.0f), 1.0f);
+        glClearColor((clear_color_red / 255.0f), (clear_color_green / 255.0f), (clear_color_blue / 255.0f), 1.0f);
     }
 
     // Create the shader program
@@ -155,6 +167,7 @@ void graphics_init(s32 width, s32 height) {
 
 void graphics_begin_frame() {
     glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor((clear_color_red / 255.0f), (clear_color_green / 255.0f), (clear_color_blue / 255.0f), 1.0f);
 }
 
 void graphics_end_frame() {
